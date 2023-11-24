@@ -12,14 +12,14 @@ export function getCode(mobile){
     })
 }
 
-export function loginReq(mobile,code){
+export function loginReq(mobile,password){
     //http://localhost:8090/api/
     return request({
-        url: '/member/login',
+        url: '/business/admin/login',
         method: 'POST',
         data: {
             mobile: mobile,
-            code: code
+            password: password
         }
     })
 }
@@ -28,7 +28,7 @@ export function loginReq(mobile,code){
 export function saveStation(station){
     //http://localhost:8090/api/
     return request({
-        url: '/station/save',
+        url: '//business/admin/station/save',
         method: 'POST',
         data:{
             ...station
@@ -44,7 +44,7 @@ export function saveStation(station){
 export function getStations(page,size){
     //http://localhost:8090/api/
     return request({
-        url: 'station/query_list',
+        url: '/business/admin/station/query_list',
         method: 'GET',
         params:{
             page,
@@ -57,11 +57,62 @@ export function getStations(page,size){
         ]})
 }
 
+/**
+ * 删除管理员信息
+ * @param record
+ * @returns {*}
+ */
 export function deleteStation(record){
     //http://localhost:8090/api/
     return request({
-        url: 'station/delete/'+record.id,
+        url: '/business/admin/station/delete/'+record.id,
         method: 'DELETE',
     })
 }
 
+
+/**
+ * 保存、更新管理员信息
+ * @param admin
+ * @returns {*}
+ */
+export function saveAdmin(admin){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/admin/save',
+        method: 'POST',
+        data:{
+            ...admin
+        }
+    })
+}
+
+export function deleteAdmin(record){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/admin/delete/'+record.id,
+        method: 'DELETE',
+    })
+}
+
+/**
+ * 查询管理员
+ * @param page
+ * @param size
+ * @returns {*}
+ */
+export function getAdmin(page,size){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/admin/query_list',
+        method: 'GET',
+        params:{
+            page,
+            size,
+        },
+    },{transformResponse: [
+            function (data){
+                return data;
+            }
+        ]})
+}

@@ -28,12 +28,17 @@ export default defineComponent({
 
       <a-menu-item key="/welcome">
         <router-link to="/welcome">
-          <HomeOutlined />&nbsp;欢迎页
+          <HomeOutlined />&nbsp;欢迎
         </router-link>
       </a-menu-item>
       <a-menu-item key="/station">
         <router-link to="/station">
-          <UserOutlined />&nbsp;乘车人管理
+          <UserOutlined />&nbsp;车站管理
+        </router-link>
+      </a-menu-item>
+      <a-menu-item key="/admin">
+        <router-link to="/admin">
+          <UserOutlined />&nbsp;管理员
         </router-link>
       </a-menu-item>
     </a-menu>

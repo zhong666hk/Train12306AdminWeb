@@ -30,6 +30,10 @@ const routes = [
         path: '/station',
         component:()=>import("@/views/main/station.vue"),
       },
+      {
+        path: '/admin',
+        component:()=>import("@/views/main/admin.vue"),
+      },
     ]
   },
   {

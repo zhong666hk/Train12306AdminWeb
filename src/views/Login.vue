@@ -9,28 +9,24 @@
             :label-col="{ span: 8 }"
             :wrapper-col="{ span: 12 }"
             autocomplete="off"
+            @validate="handleValidate"
         >
           <a-form-item
               label="Mobile"
               name="mobile"
-              :rules="[{ required: true, message: '请输入手机号!' }]"
+              :rules="[{ required: true, message: '请输入在正确手机号!' ,pattern:/(^\d{11}$)/}]"
           >
             <a-input v-model:value="loginForm.mobile" placeholder="手机号"/>
           </a-form-item>
-
           <a-form-item
-              label="Code"
-              name="code"
-              :rules="[{ required: true, message: '请输入验证码!' }]"
+              label="Password"
+              name="password"
+              :rules="[{ required: true, message: '请输入符合条件的密码!', pattern:/^[a-zA-Z]\w{6,15}$/,trigger: 'blur'}]"
           >
-            <a-input v-model:value="loginForm.code">
-              <template #addonAfter>
-                <a @click="sendCode">获取验证码</a>
-              </template>
-            </a-input>
+            <a-input v-model:value="loginForm.password" placeholder="密码"/>
           </a-form-item>
           <a-form-item :wrapper-col="{ offset: 6, span: 12 }">
-            <a-button @click="login" type="primary"  html-type="submit" style="width: 100%">登录</a-button>
+            <a-button v-model:disabled="isUsable" @click="login" type="primary"  html-type="submit" style="width: 100%">登录</a-button>
           </a-form-item>
         </a-form>
       </a-col>
@@ -40,8 +36,8 @@
 
 </template>
 <script>
-import { defineComponent, reactive } from 'vue';
-import {getCode, loginReq} from "@/API";
+import {defineComponent, reactive, ref} from 'vue';
+import { loginReq} from "@/API";
 import {notification} from "ant-design-vue";
 /**
  * useRouter --全局路由的管理--》路由的管理者
@@ -56,20 +52,12 @@ export default defineComponent({
 
     const loginForm = reactive({
       mobile: '16607211504',
-      code: '',
+      password: '',
     });
 
-    const sendCode = ()=>{
-      getCode(loginForm.mobile).then(res => {
-        notification.success({description:'验证码为'+res.data})
-        loginForm.code=res.data
-      }).catch(err=>{
-        console.log(err);
-      })
-    }
 
     const login = () => {
-      loginReq(loginForm.mobile,loginForm.code).then(res=>{
+      loginReq(loginForm.mobile,loginForm.password).then(res=>{
         console.log(res)
         if (res.code === 200){
           notification.success({description:res.message})
@@ -82,11 +70,28 @@ export default defineComponent({
         console.log(err)
       })
     };
+    /**
+     * 每次 校验都会触发一次
+     * @param name
+     * @param status
+     * @param errorMsgs
+     */
+    const handleValidate = (name,status,errorMsgs) => {
+      console.log(name,status,errorMsgs)
+      if (status){
+        isUsable.value=false;
+      }else {
+        isUsable.value=true;
+      }
+    };
+
+    const isUsable=ref(false);
 
     return {
       loginForm,
-      sendCode,
-      login
+      login,
+      isUsable,
+      handleValidate
     };
   },
 });

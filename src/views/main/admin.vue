@@ -5,7 +5,7 @@
       <a-button type="primary" @click="onAdd">新增</a-button>
     </a-space>
   </p>
-  <a-table :dataSource="businesss"
+  <a-table :dataSource="admins"
            :columns="columns"
            :pagination="pagination"
            @change="handleTableChange"
@@ -22,19 +22,30 @@
           <a @click="onEdit(record)">编辑</a>
         </a-space>
       </template>
+      <!--        对type列的自定义操作-->
+      <template v-else-if="column.dataIndex==='isDelete'">
+          <span v-for="item in IS_DELETE_TYPE_ARRAY" :key="item.key">
+            <span v-if="item.key===record.isDelete">
+              {{item.value}}
+            </span>
+          </span>
+      </template>
     </template>
   </a-table>
-  <a-modal v-model:visible="visible" title="车站" @ok="handleOk"
+  <a-modal v-model:visible="visible" title="管理员" @ok="handleOk"
            ok-text="确认" cancel-text="取消">
-    <a-form :model="business" :label-col="{span: 4}" :wrapper-col="{ span: 20 }">
-      <a-form-item label="站名">
-        <a-input v-model:value="business.name" />
+    <a-form :model="admin" :label-col="{span: 4}" :wrapper-col="{ span: 20 }">
+      <a-form-item label="手机号">
+        <a-input v-model:value="admin.mobile" />
       </a-form-item>
-      <a-form-item label="站名拼音">
-        <a-input v-model:value="business.namePinyin" />
+      <a-form-item label="密码">
+        <a-input v-model:value="admin.password" />
       </a-form-item>
-      <a-form-item label="站名拼音首字母">
-        <a-input v-model:value="business.namePy" />
+      <a-form-item label="创建时间">
+        <a-date-picker v-model:value="admin.createTime" valueFormat="YYYY-MM-DD HH:mm:ss" show-time placeholder="请选择日期" />
+      </a-form-item>
+      <a-form-item label="是否删除(0：没有删除1：已经删除)">
+        <a-input v-model:value="admin.isDelete" />
       </a-form-item>
     </a-form>
   </a-modal>
@@ -43,21 +54,20 @@
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
 import {notification} from "ant-design-vue";
-import {deleteStation, getStations, saveStation} from "@/API";
+import {deleteAdmin, getAdmin, saveAdmin} from "@/API";
 
 export default defineComponent({
-  name: "business-view",
+  name: "admin-view",
   setup() {
     const visible = ref(false);
-    let business = ref({
+    let admin = ref({
       id: undefined,
-      name: undefined,
-      namePinyin: undefined,
-      namePy: undefined,
+      mobile: undefined,
+      password: undefined,
       createTime: undefined,
-      updateTime: undefined,
+      isDelete: undefined,
     });
-    const businesss = ref([]);
+    const admins = ref([]);
     // 分页的三个属性名是固定的
     const pagination = ref({
       total: 0,
@@ -67,19 +77,24 @@ export default defineComponent({
     let loading = ref(false);
     const columns = [
     {
-      title: '站名',
-      dataIndex: 'name',
-      key: 'name',
+      title: '手机号',
+      dataIndex: 'mobile',
+      key: 'mobile',
     },
     {
-      title: '站名拼音',
-      dataIndex: 'namePinyin',
-      key: 'namePinyin',
+      title: '密码',
+      dataIndex: 'password',
+      key: 'password',
     },
     {
-      title: '站名拼音首字母',
-      dataIndex: 'namePy',
-      key: 'namePy',
+      title: '创建时间',
+      dataIndex: 'createTime',
+      key: 'createTime',
+    },
+    {
+      title: '状态',
+      dataIndex: 'isDelete',
+      key: 'isDelete',
     },
     {
       title: '操作',
@@ -88,42 +103,42 @@ export default defineComponent({
     ];
 
     const onAdd = () => {
-      business.value = {};
+      admin.value = {};
       visible.value = true;
     };
 
     const onEdit = (record) => {
-      business.value = window.Tool.copy(record);
+      admin.value = window.Tool.copy(record);
       visible.value = true;
     };
 
     const onDelete = (record) => {
-      deleteStation(record).then((response) => {
-        console.log(response)
-        if (response.code===200) {
+      deleteAdmin(record).then((response) => {
+        const data = response.data;
+        if (data.success) {
           notification.success({description: "删除成功！"});
           handleQuery({
             page: pagination.value.current,
             size: pagination.value.pageSize,
           });
         } else {
-          notification.error({description: response.message});
+          notification.error({description: data.message});
         }
       });
     };
 
     const handleOk = () => {
-      saveStation(business.value).then((response) => {
-        console.log(response)
-        if (response.code===200) {
-          notification.success({description: response.message});
+      saveAdmin(admin.value).then((response) => {
+        let data = response.data;
+        if (data.success) {
+          notification.success({description: "保存成功！"});
           visible.value = false;
           handleQuery({
             page: pagination.value.current,
             size: pagination.value.pageSize
           });
         } else {
-          notification.error({description: response.message});
+          notification.error({description: data.message});
         }
       });
     };
@@ -136,15 +151,15 @@ export default defineComponent({
         };
       }
       loading.value = true;
-      getStations(param.page,param.size).then((response) => {
+      getAdmin(param.page,param.size).then((response) => {
         loading.value = false;
         if (response.code===200) {
-          businesss.value = response.data.records;
+          admins.value = response.data.records;
           // 设置分页控件的值
           pagination.value.current = param.page;
-          pagination.value.total = response.total;
+          pagination.value.total = response.content.total;
         } else {
-          notification.error({description: response.message});
+          notification.error({description: data.message});
         }
       });
     };
@@ -166,9 +181,9 @@ export default defineComponent({
     });
 
     return {
-      business,
+      admin,
       visible,
-      businesss,
+      admins,
       pagination,
       columns,
       handleTableChange,
@@ -177,7 +192,8 @@ export default defineComponent({
       onAdd,
       handleOk,
       onEdit,
-      onDelete
+      onDelete,
+      IS_DELETE_TYPE_ARRAY:[{key:0,value:"在职"},{key:1,value:"离职"}]
     };
   },
 });
