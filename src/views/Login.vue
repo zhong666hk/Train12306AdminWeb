@@ -14,7 +14,7 @@
           <a-form-item
               label="Mobile"
               name="mobile"
-              :rules="[{ required: true, message: '请输入在正确手机号!' ,pattern:/(^\d{11}$)/}]"
+              :rules="[{ required: true,trigger: 'blur', message: '请输入在正确手机号!' ,pattern:/(^\d{11}$)/}]"
           >
             <a-input v-model:value="loginForm.mobile" placeholder="手机号"/>
           </a-form-item>
@@ -28,6 +28,9 @@
           <a-form-item :wrapper-col="{ offset: 6, span: 12 }">
             <a-button v-model:disabled="isUsable" @click="login" type="primary"  html-type="submit" style="width: 100%">登录</a-button>
           </a-form-item>
+          <a-form-item :wrapper-col="{ offset: 6, span: 12 }">
+            <a-button v-model:disabled="isUsable" @click="register" type="primary"  html-type="submit" style="width: 100%">注册</a-button>
+          </a-form-item>
         </a-form>
       </a-col>
 
@@ -37,7 +40,7 @@
 </template>
 <script>
 import {defineComponent, reactive, ref} from 'vue';
-import { loginReq} from "@/API";
+import {loginReq, registerReq} from "@/API";
 import {notification} from "ant-design-vue";
 /**
  * useRouter --全局路由的管理--》路由的管理者
@@ -55,7 +58,19 @@ export default defineComponent({
       password: '',
     });
 
-
+    const register = () => {
+      registerReq(loginForm.mobile,loginForm.password).then(res=>{
+        console.log(res)
+        if (res.code === 200){
+          notification.success({description:res.message})
+          login();//注册成功就直接登录
+        }else {
+          notification.error({description:res.message})
+        }
+      }).catch(err=>{
+        console.log(err)
+      })
+    };
     const login = () => {
       loginReq(loginForm.mobile,loginForm.password).then(res=>{
         console.log(res)
@@ -91,7 +106,8 @@ export default defineComponent({
       loginForm,
       login,
       isUsable,
-      handleValidate
+      handleValidate,
+      register
     };
   },
 });

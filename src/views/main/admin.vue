@@ -114,23 +114,21 @@ export default defineComponent({
 
     const onDelete = (record) => {
       deleteAdmin(record).then((response) => {
-        const data = response.data;
-        if (data.success) {
+        if (response.code===200) {
           notification.success({description: "删除成功！"});
           handleQuery({
             page: pagination.value.current,
             size: pagination.value.pageSize,
           });
         } else {
-          notification.error({description: data.message});
+          notification.error({description: response.message});
         }
       });
     };
 
     const handleOk = () => {
       saveAdmin(admin.value).then((response) => {
-        let data = response.data;
-        if (data.success) {
+        if (response.code===200) {
           notification.success({description: "保存成功！"});
           visible.value = false;
           handleQuery({
@@ -138,7 +136,7 @@ export default defineComponent({
             size: pagination.value.pageSize
           });
         } else {
-          notification.error({description: data.message});
+          notification.error({description: response.message});
         }
       });
     };
@@ -153,13 +151,14 @@ export default defineComponent({
       loading.value = true;
       getAdmin(param.page,param.size).then((response) => {
         loading.value = false;
+        console.log(response)
         if (response.code===200) {
           admins.value = response.data.records;
           // 设置分页控件的值
           pagination.value.current = param.page;
-          pagination.value.total = response.content.total;
+          pagination.value.total = response.data.total;
         } else {
-          notification.error({description: data.message});
+          notification.error({description: response.message});
         }
       });
     };

@@ -37,6 +37,31 @@
           <UserOutlined />&nbsp;管理员
         </router-link>
       </a-menu-item>
+
+      <a-menu-item key="/train">
+        <router-link to="/train">
+          <UserOutlined />&nbsp;火车管理
+        </router-link>
+      </a-menu-item>
+
+      <a-menu-item key="/train_station">
+        <router-link to="/train_station">
+          <UserOutlined />&nbsp;火车车站管理
+        </router-link>
+      </a-menu-item>
+
+      <a-menu-item key="/train_carriage">
+        <router-link to="/train_carriage">
+          <UserOutlined />&nbsp;火车车厢管理
+        </router-link>
+      </a-menu-item>
+
+      <a-menu-item key="/train_seat">
+        <router-link to="/train_seat">
+          <UserOutlined />&nbsp;火车座位管理
+        </router-link>
+      </a-menu-item>
+
     </a-menu>
   </a-layout-header>
 </template>

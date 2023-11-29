@@ -34,6 +34,22 @@ const routes = [
         path: '/admin',
         component:()=>import("@/views/main/admin.vue"),
       },
+      {
+        path: '/train',
+        component:()=>import("@/views/main/train.vue"),
+      },
+      {
+        path: '/train_station',
+        component:()=>import("@/views/main/train_station.vue"),
+      },
+      {
+        path: '/train_carriage',
+        component:()=>import("@/views/main/train_carriage.vue"),
+      },
+      {
+        path: '/train_seat',
+        component:()=>import("@/views/main/train_seat.vue"),
+      },
     ]
   },
   {

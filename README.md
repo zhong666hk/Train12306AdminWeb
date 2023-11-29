@@ -198,3 +198,21 @@ export function getAdmin(page,size){
         ]})
 }
 ```
+## 3.生成各个模快添加拼音转化功能
+### 3.1 修改station模块的添加让拼音自动生成
+插件 pinyin-pro的引用 [pinyin-pro官网](https://pinyin-pro.cn/use/pinyin.html)  
+添加一个监视器来监听station.name的改变
+```js
+// 监听name来改变 pinyin
+watch(()=> station.value.name,()=>{
+    if (Tool.isNotEmpty(station.value.name)){
+        station.value.namePinyin=pinyin(station.value.name,{toneType:'none'}).replaceAll(" ","")
+        station.value.namePy=pinyin(station.value.name,{pattern:'first',toneType:'none'}).replaceAll(" ","")
+    }else {
+        station.value.namePy = ""
+        station.value.namePinyin = ""
+    }
+},{immediate:true})
+```
+
+* 在为train_station和train一样添加这个拼音

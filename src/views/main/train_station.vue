@@ -5,7 +5,7 @@
       <a-button type="primary" @click="onAdd">新增</a-button>
     </a-space>
   </p>
-  <a-table :dataSource="stations"
+  <a-table :dataSource="train_stations"
            :columns="columns"
            :pagination="pagination"
            @change="handleTableChange"
@@ -24,17 +24,32 @@
       </template>
     </template>
   </a-table>
-  <a-modal v-model:visible="visible" title="车站" @ok="handleOk"
+  <a-modal v-model:visible="visible" title="火车车站" @ok="handleOk"
            ok-text="确认" cancel-text="取消">
-    <a-form :model="station" :label-col="{span: 4}" :wrapper-col="{ span: 20 }">
+    <a-form :model="train_station" :label-col="{span: 4}" :wrapper-col="{ span: 20 }">
+      <a-form-item label="车次编号">
+        <a-input v-model:value="train_station.trainCode" />
+      </a-form-item>
+      <a-form-item label="站序">
+        <a-input v-model:value="train_station.index" />
+      </a-form-item>
       <a-form-item label="站名">
-        <a-input v-model:value="station.name" />
+        <a-input v-model:value="train_station.name" />
       </a-form-item>
       <a-form-item label="站名拼音">
-        <a-input v-model:value="station.namePinyin" disabled/>
+        <a-input v-model:value="train_station.namePinyin" disabled />
       </a-form-item>
-      <a-form-item label="站名拼音首字母">
-        <a-input v-model:value="station.namePy" disabled />
+      <a-form-item label="进站时间">
+        <a-time-picker v-model:value="train_station.inTime" valueFormat="HH:mm:ss" placeholder="请选择时间" />
+      </a-form-item>
+      <a-form-item label="出站时间">
+        <a-time-picker v-model:value="train_station.outTime" valueFormat="HH:mm:ss" placeholder="请选择时间" />
+      </a-form-item>
+      <a-form-item label="停站时长">
+        <a-time-picker v-model:value="train_station.stopTime" valueFormat="HH:mm:ss" placeholder="请选择时间" />
+      </a-form-item>
+      <a-form-item label="里程（公里）">
+        <a-input v-model:value="train_station.km" />
       </a-form-item>
     </a-form>
   </a-modal>
@@ -43,32 +58,38 @@
 <script>
 import {defineComponent, ref, onMounted, watch} from 'vue';
 import {notification} from "ant-design-vue";
-import {deleteStation, getStations, saveStation} from "@/API";
+import {deleteTrainStation, getTrainStation, saveTrainStation} from "@/API";
 import {pinyin} from "pinyin-pro";
 
 export default defineComponent({
-  name: "station-view",
+  name: "train_station-view",
   setup() {
     const visible = ref(false);
-    let station = ref({
+    let train_station = ref({
       id: undefined,
+      trainCode: undefined,
+      index: undefined,
       name: undefined,
       namePinyin: undefined,
-      namePy: undefined,
+      inTime: undefined,
+      outTime: undefined,
+      stopTime: undefined,
+      km: undefined,
       createTime: undefined,
       updateTime: undefined,
     });
-    // 监听name来改变 pinyin
-    watch(()=> station.value.name,()=>{
-        if (Tool.isNotEmpty(station.value.name)){
-          station.value.namePinyin=pinyin(station.value.name,{toneType:'none'}).replaceAll(" ","")
-          station.value.namePy=pinyin(station.value.name,{pattern:'first',toneType:'none'}).replaceAll(" ","")
-        }else {
-          station.value.namePy = ""
-          station.value.namePinyin = ""
-        }
+
+    //监听name
+    watch(()=>train_station.value.name,()=>{
+      if (Tool.isNotEmpty(train_station.value.name)){
+        train_station.value.namePinyin= pinyin(train_station.value.name,{ toneType: 'none' }).replaceAll(" ","")
+      }else {
+        train_station.value.namePinyin=""
+      }
     },{immediate:true})
-    const stations = ref([]);
+
+
+    const train_stations = ref([]);
     // 分页的三个属性名是固定的
     const pagination = ref({
       total: 0,
@@ -77,6 +98,16 @@ export default defineComponent({
     });
     let loading = ref(false);
     const columns = [
+    {
+      title: '车次编号',
+      dataIndex: 'trainCode',
+      key: 'trainCode',
+    },
+    {
+      title: '站序',
+      dataIndex: 'index',
+      key: 'index',
+    },
     {
       title: '站名',
       dataIndex: 'name',
@@ -88,9 +119,24 @@ export default defineComponent({
       key: 'namePinyin',
     },
     {
-      title: '站名拼音首字母',
-      dataIndex: 'namePy',
-      key: 'namePy',
+      title: '进站时间',
+      dataIndex: 'inTime',
+      key: 'inTime',
+    },
+    {
+      title: '出站时间',
+      dataIndex: 'outTime',
+      key: 'outTime',
+    },
+    {
+      title: '停站时长',
+      dataIndex: 'stopTime',
+      key: 'stopTime',
+    },
+    {
+      title: '里程（公里）',
+      dataIndex: 'km',
+      key: 'km',
     },
     {
       title: '操作',
@@ -99,20 +145,19 @@ export default defineComponent({
     ];
 
     const onAdd = () => {
-      station.value = {};
+      train_station.value = {};
       visible.value = true;
     };
 
     const onEdit = (record) => {
-      station.value = window.Tool.copy(record);
+      train_station.value = window.Tool.copy(record);
       visible.value = true;
     };
 
     const onDelete = (record) => {
-      deleteStation(record).then((response) => {
-        console.log(response)
+      deleteTrainStation(record).then((response) => {
         if (response.code===200) {
-          notification.success({description: "删除成功！"});
+          notification.success({description: response.message});
           handleQuery({
             page: pagination.value.current,
             size: pagination.value.pageSize,
@@ -124,8 +169,7 @@ export default defineComponent({
     };
 
     const handleOk = () => {
-      saveStation(station.value).then((response) => {
-        console.log(response)
+      saveTrainStation(train_station.value).then((response) => {
         if (response.code===200) {
           notification.success({description: response.message});
           visible.value = false;
@@ -147,13 +191,13 @@ export default defineComponent({
         };
       }
       loading.value = true;
-      getStations(param.page,param.size).then((response) => {
+      getTrainStation(param.page,param.size).then((response) => {
         loading.value = false;
         if (response.code===200) {
-          stations.value = response.data.records;
+          train_stations.value = response.data.records;
           // 设置分页控件的值
           pagination.value.current = param.page;
-          pagination.value.total = response.total;
+          pagination.value.total = response.data.total;
         } else {
           notification.error({description: response.message});
         }
@@ -177,9 +221,9 @@ export default defineComponent({
     });
 
     return {
-      station,
+      train_station,
       visible,
-      stations,
+      train_stations,
       pagination,
       columns,
       handleTableChange,
