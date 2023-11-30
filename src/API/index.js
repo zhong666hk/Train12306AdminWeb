@@ -1,7 +1,7 @@
 import {request} from "@/config/Axios";
 //每一个请求都被封装为一个实例
 
-
+//============================登录======================
 export function loginReq(mobile,password){
     //http://localhost:8090/api/
     return request({
@@ -25,8 +25,9 @@ export function registerReq(mobile,password){
         }
     })
 }
+//==============================车站==========================
 
-// 发送保存的乘客的信息
+// 发送保存的车站的信息
 export function saveStation(station){
     //http://localhost:8090/api/
     return request({
@@ -39,7 +40,7 @@ export function saveStation(station){
 }
 
 /**
- * 查询passengers
+ * 查询车站
  * @param page 当前页
  * @param size 页面的大小
  */
@@ -60,7 +61,7 @@ export function getStations(page,size){
 }
 
 /**
- * 删除管理员信息
+ * 删除车站信息
  * @param record
  * @returns {*}
  */
@@ -72,7 +73,7 @@ export function deleteStation(record){
     })
 }
 
-
+//==================================管理员========================
 /**
  * 保存、更新管理员信息
  * @param admin
@@ -118,8 +119,13 @@ export function getAdmin(page,size){
             }
         ]})
 }
-
-// 火车
+//=========================================火车==================
+/** 火车
+ *
+ * @param page
+ * @param size
+ * @returns {*}
+ */
 export function getTrain(page,size){
     //http://localhost:8090/api/
     return request({
@@ -160,7 +166,21 @@ export function saveTrain(train){
     })
 }
 
-// 火车车站
+
+/**
+ * 查询所有火车所有信息
+ * @returns {*}
+ */
+export function queryAllTrain(){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/train/query_all',
+        method: 'GET',
+
+    })
+}
+
+// =================================火车车站===========================
 export function getTrainStation(page,size){
     //http://localhost:8090/api/
     return request({
@@ -201,7 +221,7 @@ export function saveTrainStation(trainStation){
     })
 }
 
-// 火车车厢
+// =======================================火车车厢=========================
 export function getTrainCarriage(page,size){
     //http://localhost:8090/api/
     return request({
@@ -242,7 +262,7 @@ export function saveTrainCarriage(trainCarriage){
     })
 }
 
-// ----------------------
+// =========================================火车座位=====================
 
 /**
  * 保存、更新火车座位信息

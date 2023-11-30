@@ -171,6 +171,7 @@ export default defineComponent({
       visible.value = true;
     };
 
+
     const onDelete = (record) => {
       deleteTrain(record).then((response) => {
         if (response.code === 200) {
@@ -250,7 +251,7 @@ export default defineComponent({
       onAdd,
       handleOk,
       onEdit,
-      onDelete
+      onDelete,
     };
   },
 });
