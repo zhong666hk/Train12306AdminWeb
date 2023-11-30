@@ -28,18 +28,8 @@
            ok-text="确认" cancel-text="取消">
     <a-form :model="train_station" :label-col="{span: 4}" :wrapper-col="{ span: 20 }">
       <a-form-item label="车次编号">
-        <a-select
-            v-model:value="train_station.trainCode"
-            style="width: 100%"
-            placeholder="请选择车次编号"
-            show-search
-            :filter-option="filterTrainCodeOption"
-        >
-          <a-select-option v-for="item in trains" :key="item.code"
-                           :value="item.code" :label="item.code+item.start+item.end">
-            {{item.code}}|{{item.start}}~{{item.end}}
-          </a-select-option>
-        </a-select>
+<!--        抽取成一个组件-->
+        <Train-select-view v-model="train_station.trainCode"></Train-select-view>
       </a-form-item>
       <a-form-item label="站序">
         <a-input v-model:value="train_station.index" />
@@ -69,11 +59,13 @@
 <script>
 import {defineComponent, ref, onMounted, watch} from 'vue';
 import {notification} from "ant-design-vue";
-import {deleteTrainStation, getTrainStation, queryAllTrain, saveTrainStation} from "@/API";
+import {deleteTrainStation, getTrainStation, saveTrainStation} from "@/API";
 import {pinyin} from "pinyin-pro";
+import TrainSelectView from "@/components/Train-select-view.vue";
 
 export default defineComponent({
   name: "train_station-view",
+  components: {TrainSelectView},
   setup() {
     const visible = ref(false);
     let train_station = ref({
@@ -155,26 +147,12 @@ export default defineComponent({
     }
     ];
 
-    // 查询车站编号
-    const queryTrainCode =()=>{
-      queryAllTrain().then((response)=>{
-        if (response.code===200){
-          console.log("查询车站code")
-          console.log(response)
-          trains.value=response.data
-        }else {
-          notification.error({description:response.message})
-        }
-      })
-    }
     const onAdd = () => {
-      queryTrainCode()
       train_station.value = {};
       visible.value = true;
     };
 
     const onEdit = (record) => {
-      queryTrainCode();
       train_station.value = window.Tool.copy(record);
       visible.value = true;
     };
@@ -239,19 +217,6 @@ export default defineComponent({
       });
     };
 
-    const trains = ref([]);
-
-    /**
-     * 过滤函数
-     * @param input 输入框的值
-     * @param option 选择栏在数据
-     * @returns {boolean}
-     */
-    const filterTrainCodeOption = (input,option) => {
-      console.log(input,option)
-      return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-    }
-
     onMounted(() => {
       handleQuery({
         page: 1,
@@ -274,9 +239,6 @@ export default defineComponent({
       handleOk,
       onEdit,
       onDelete,
-      queryTrainCode,
-      trains,
-      filterTrainCodeOption,
     };
   },
 });
