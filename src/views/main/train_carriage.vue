@@ -32,7 +32,7 @@
       </template>
     </template>
   </a-table>
-  <a-modal v-model:visible="visible" title="火车车厢" @ok="handleOk"
+  <a-modal v-model:open="open" title="火车车厢" @ok="handleOk"
            ok-text="确认" cancel-text="取消">
     <a-form :model="train_carriage" :label-col="{span: 4}" :wrapper-col="{ span: 20 }">
       <a-form-item label="车次编号">
@@ -48,15 +48,15 @@
           </a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item label="座位数">
-        <a-input v-model:value="train_carriage.seatCount" />
-      </a-form-item>
+<!--      <a-form-item label="座位数">-->
+<!--        <a-input v-model:value="train_carriage.seatCount" />-->
+<!--      </a-form-item>-->
       <a-form-item label="排数">
         <a-input v-model:value="train_carriage.rowCount" />
       </a-form-item>
-      <a-form-item label="列数">
-        <a-input v-model:value="train_carriage.colCount" />
-      </a-form-item>
+<!--      <a-form-item label="列数">-->
+<!--        <a-input v-model:value="train_carriage.colCount" />-->
+<!--      </a-form-item>-->
     </a-form>
   </a-modal>
 </template>
@@ -72,7 +72,7 @@ export default defineComponent({
   components: {TrainSelectView},
   setup() {
     const SEAT_TYPE_ARRAY = window.SEAT_TYPE_ARRAY;
-    const visible = ref(false);
+    const open = ref(false);
     let train_carriage = ref({
       id: undefined,
       trainCode: undefined,
@@ -131,12 +131,12 @@ export default defineComponent({
 
     const onAdd = () => {
       train_carriage.value = {};
-      visible.value = true;
+      open.value = true;
     };
 
     const onEdit = (record) => {
       train_carriage.value = window.Tool.copy(record);
-      visible.value = true;
+      open.value = true;
     };
 
     const onDelete = (record) => {
@@ -157,7 +157,7 @@ export default defineComponent({
       saveTrainCarriage(train_carriage.value).then((response) => {
         if (response.code===200) {
           notification.success({description: response.message});
-          visible.value = false;
+          open.value = false;
           handleQuery({
             page: pagination.value.current,
             size: pagination.value.pageSize
@@ -212,7 +212,7 @@ export default defineComponent({
     return {
       SEAT_TYPE_ARRAY,
       train_carriage,
-      visible,
+      open,
       train_carriages,
       pagination,
       columns,

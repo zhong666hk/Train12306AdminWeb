@@ -24,7 +24,7 @@
       </template>
     </template>
   </a-table>
-  <a-modal v-model:visible="visible" title="车站" @ok="handleOk"
+  <a-modal v-model:open="open" title="车站" @ok="handleOk"
            ok-text="确认" cancel-text="取消">
     <a-form :model="station" :label-col="{span: 4}" :wrapper-col="{ span: 20 }">
       <a-form-item label="站名">
@@ -49,7 +49,7 @@ import {pinyin} from "pinyin-pro";
 export default defineComponent({
   name: "station-view",
   setup() {
-    const visible = ref(false);
+    const open = ref(false);
     let station = ref({
       id: undefined,
       name: undefined,
@@ -100,12 +100,12 @@ export default defineComponent({
 
     const onAdd = () => {
       station.value = {};
-      visible.value = true;
+      open.value = true;
     };
 
     const onEdit = (record) => {
       station.value = window.Tool.copy(record);
-      visible.value = true;
+      open.value = true;
     };
 
     const onDelete = (record) => {
@@ -128,7 +128,7 @@ export default defineComponent({
         console.log(response)
         if (response.code===200) {
           notification.success({description: response.message});
-          visible.value = false;
+          open.value = false;
           handleQuery({
             page: pagination.value.current,
             size: pagination.value.pageSize
@@ -178,7 +178,7 @@ export default defineComponent({
 
     return {
       station,
-      visible,
+      open,
       stations,
       pagination,
       columns,

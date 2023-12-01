@@ -214,5 +214,15 @@ watch(()=> station.value.name,()=>{
     }
 },{immediate:true})
 ```
-
 * 在为train_station和train一样添加这个拼音
+
+## 5.优化火车座位页面是禁止修改的只读
+
+
+
+## 总结
+```txt
+    * :disabled="!!train.id 来区分是添加还是编辑-->编辑不能修改code
+    直接用 train.id ====》 if(train.id)  可能数据为null 导致报错
+    所以用!来隔离 !train.id ===> if(!!train.id)
+```

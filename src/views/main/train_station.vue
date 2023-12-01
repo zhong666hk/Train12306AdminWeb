@@ -25,7 +25,7 @@
       </template>
     </template>
   </a-table>
-  <a-modal v-model:visible="visible" title="火车车站" @ok="handleOk"
+  <a-modal v-model:open="open" title="火车车站" @ok="handleOk"
            ok-text="确认" cancel-text="取消">
     <a-form :model="train_station" :label-col="{span: 4}" :wrapper-col="{ span: 20 }">
       <a-form-item label="车次编号">
@@ -45,11 +45,15 @@
       <a-form-item label="进站时间">
         <a-time-picker v-model:value="train_station.inTime" valueFormat="HH:mm:ss" placeholder="请选择时间" />
       </a-form-item>
-      <a-form-item label="出站时间">
+      <a-form-item
+          label="出站时间"
+          name="outTime"
+          :rules="[{ required: true, message: '请输入正确的结束时间',trigger:'blur'},{validator:validOutTime}]"
+      >
         <a-time-picker v-model:value="train_station.outTime" valueFormat="HH:mm:ss" placeholder="请选择时间" />
       </a-form-item>
       <a-form-item label="停站时长">
-        <a-time-picker v-model:value="train_station.stopTime" valueFormat="HH:mm:ss" placeholder="请选择时间" />
+        <a-time-picker v-model:value="train_station.stopTime" valueFormat="HH:mm:ss" placeholder="请选择时间" disabled />
       </a-form-item>
       <a-form-item label="里程（公里）">
         <a-input v-model:value="train_station.km" />
@@ -65,12 +69,13 @@ import {deleteTrainStation, getTrainStation, saveTrainStation} from "@/API";
 import {pinyin} from "pinyin-pro";
 import TrainSelectView from "@/components/Train-select-view.vue";
 import StationSelectView from "@/components/Station-select-view.vue";
+import dayjs from "dayjs";
 
 export default defineComponent({
   name: "train_station-view",
   components: {StationSelectView, TrainSelectView},
   setup() {
-    const visible = ref(false);
+    const open = ref(false);
     let train_station = ref({
       id: undefined,
       trainCode: undefined,
@@ -94,6 +99,20 @@ export default defineComponent({
       }
     },{immediate:true})
 
+
+    // 监听入站时长和出站时间 -->计算靠站时长
+    watch(()=>train_station.value.inTime,()=>{
+      // 出站 - 进站 化为秒
+      let diff = dayjs(train_station.value.outTime,'HH:mm:ss')
+          .diff(dayjs(train_station.value.inTime,'HH:mm:ss'),'seconds');
+      train_station.value.stopTime= dayjs ('00:00:00','HH:mm:ss').second(diff).format('HH:mm:ss');
+    },{immediate:true})
+    watch(()=>train_station.value.outTime,()=>{
+      // 出站 - 进站 化为秒
+      let diff = dayjs(train_station.value.outTime,'HH:mm:ss')
+          .diff(dayjs(train_station.value.inTime,'HH:mm:ss'),'seconds');
+      train_station.value.stopTime= dayjs ('00:00:00','HH:mm:ss').second(diff).format('HH:mm:ss');
+    },{immediate:true})
 
     const train_stations = ref([]);
     // 分页的三个属性名是固定的
@@ -152,12 +171,12 @@ export default defineComponent({
 
     const onAdd = () => {
       train_station.value = {};
-      visible.value = true;
+      open.value = true;
     };
 
     const onEdit = (record) => {
       train_station.value = window.Tool.copy(record);
-      visible.value = true;
+      open.value = true;
     };
 
     const onDelete = (record) => {
@@ -179,7 +198,7 @@ export default defineComponent({
       saveTrainStation(train_station.value).then((response) => {
         if (response.code===200) {
           notification.success({description: response.message});
-          visible.value = false;
+          open.value = false;
           handleQuery({
             page: pagination.value.current,
             size: pagination.value.pageSize
@@ -232,11 +251,18 @@ export default defineComponent({
       trainCode:null,
     })
 
+    // 框架校验是异步的 promise
+    const validOutTime=async (value)=>{
+      if (!!value && value > train_station.value.inTime){
+        await Promise.resolve()
+      }
+      await Promise.reject('出站时间非法')
+    }
 
 
     return {
       train_station,
-      visible,
+      open,
       train_stations,
       pagination,
       columns,
@@ -248,6 +274,7 @@ export default defineComponent({
       onEdit,
       onDelete,
       params,
+      validOutTime,
     };
   },
 });

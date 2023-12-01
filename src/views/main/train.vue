@@ -39,11 +39,11 @@
       </template>
     </template>
   </a-table>
-  <a-modal v-model:visible="visible" cancel-text="取消" ok-text="确认"
+  <a-modal v-model:open="open" cancel-text="取消" ok-text="确认"
            title="车次" @ok="handleOk">
     <a-form :label-col="{span: 4}" :model="train" :wrapper-col="{ span: 20 }">
       <a-form-item label="车次编号">
-        <a-input v-model:value="train.code"/>
+        <a-input v-model:value="train.code" :disabled="!!train.id"/>
       </a-form-item>
       <a-form-item label="车次类型">
         <a-select v-model:value="train.type">
@@ -86,7 +86,7 @@ export default defineComponent({
   components: {StationSelectView},
   setup() {
     const TRAIN_TYPE_ARRAY = window.TRAIN_TYPE_ARRAY;
-    const visible = ref(false);
+    const open = ref(false);
     let train = ref({
       id: undefined,
       code: undefined,
@@ -173,12 +173,12 @@ export default defineComponent({
 
     const onAdd = () => {
       train.value = {};
-      visible.value = true;
+      open.value = true;
     };
 
     const onEdit = (record) => {
       train.value = window.Tool.copy(record);
-      visible.value = true;
+      open.value = true;
     };
 
 
@@ -200,7 +200,7 @@ export default defineComponent({
       saveTrain(train.value).then((response) => {
         if (response.code === 200) {
           notification.success({description: response.message});
-          visible.value = false;
+          open.value = false;
           handleQuery({
             page: pagination.value.current,
             size: pagination.value.pageSize
@@ -261,7 +261,7 @@ export default defineComponent({
     return {
       TRAIN_TYPE_ARRAY,
       train,
-      visible,
+      open,
       trains,
       pagination,
       columns,
