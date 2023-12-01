@@ -1,7 +1,8 @@
 <template>
   <p>
     <a-space>
-      <a-button type="primary" @click="handleQuery()">刷新</a-button>
+      <Train-select-view width="200px" v-model="params.trainCode"></Train-select-view>
+      <a-button type="primary" @click="handleQuery()">查询</a-button>
       <a-button type="primary" @click="onAdd">新增</a-button>
     </a-space>
   </p>
@@ -167,6 +168,10 @@ export default defineComponent({
       });
     };
 
+    const params=ref({
+      trainCode:null
+    })
+
     const handleQuery = (param) => {
       if (!param) {
         param = {
@@ -175,7 +180,7 @@ export default defineComponent({
         };
       }
       loading.value = true;
-      getTrainCarriage(param.page,param.size).then((response) => {
+      getTrainCarriage(param.page,param.size,params.value).then((response) => {
         loading.value = false;
         if (response.code===200) {
           train_carriages.value = response.data.records;
@@ -217,7 +222,8 @@ export default defineComponent({
       onAdd,
       handleOk,
       onEdit,
-      onDelete
+      onDelete,
+      params,
     };
   },
 });

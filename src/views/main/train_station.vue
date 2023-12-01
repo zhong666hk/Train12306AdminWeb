@@ -1,7 +1,8 @@
 <template>
   <p>
     <a-space>
-      <a-button type="primary" @click="handleQuery()">刷新</a-button>
+      <Train-select-view width="200px" v-model="params.trainCode"></Train-select-view>
+      <a-button type="primary" @click="handleQuery()">查找</a-button>
       <a-button type="primary" @click="onAdd">新增</a-button>
     </a-space>
   </p>
@@ -35,7 +36,8 @@
         <a-input v-model:value="train_station.index" />
       </a-form-item>
       <a-form-item label="站名">
-        <a-input v-model:value="train_station.name" />
+        <!--        抽取成一个组件-->
+        <Station-select-view v-model="train_station.name"></Station-select-view>
       </a-form-item>
       <a-form-item label="站名拼音">
         <a-input v-model:value="train_station.namePinyin" disabled />
@@ -62,10 +64,11 @@ import {notification} from "ant-design-vue";
 import {deleteTrainStation, getTrainStation, saveTrainStation} from "@/API";
 import {pinyin} from "pinyin-pro";
 import TrainSelectView from "@/components/Train-select-view.vue";
+import StationSelectView from "@/components/Station-select-view.vue";
 
 export default defineComponent({
   name: "train_station-view",
-  components: {TrainSelectView},
+  components: {StationSelectView, TrainSelectView},
   setup() {
     const visible = ref(false);
     let train_station = ref({
@@ -195,7 +198,7 @@ export default defineComponent({
         };
       }
       loading.value = true;
-      getTrainStation(param.page,param.size).then((response) => {
+      getTrainStation(param.page,param.size,params.value).then((response) => {
         loading.value = false;
         if (response.code===200) {
           train_stations.value = response.data.records;
@@ -224,6 +227,11 @@ export default defineComponent({
       });
     });
 
+    // 查询条件
+    const params=ref({
+      trainCode:null,
+    })
+
 
 
     return {
@@ -239,6 +247,7 @@ export default defineComponent({
       handleOk,
       onEdit,
       onDelete,
+      params,
     };
   },
 });

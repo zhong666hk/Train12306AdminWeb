@@ -31,7 +31,7 @@ export function registerReq(mobile,password){
 export function saveStation(station){
     //http://localhost:8090/api/
     return request({
-        url: '/business/admin/station/save',
+        url: '/business/station/save',
         method: 'POST',
         data:{
             ...station
@@ -47,7 +47,7 @@ export function saveStation(station){
 export function getStations(page,size){
     //http://localhost:8090/api/
     return request({
-        url: '/business/admin/station/query_list',
+        url: '/business/station/query_list',
         method: 'GET',
         params:{
             page,
@@ -68,7 +68,7 @@ export function getStations(page,size){
 export function deleteStation(record){
     //http://localhost:8090/api/
     return request({
-        url: '/business/admin/station/delete/'+record.id,
+        url: '/business/station/delete/'+record.id,
         method: 'DELETE',
     })
 }
@@ -181,7 +181,21 @@ export function queryAllTrain(){
 }
 
 // =================================火车车站===========================
-export function getTrainStation(page,size){
+
+/**
+ * 查询所有火车站台所有信息
+ * @returns {*}
+ */
+export function queryAllStation(){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/station/query_all',
+        method: 'GET',
+
+    })
+}
+
+export function getTrainStation(page,size,params){
     //http://localhost:8090/api/
     return request({
         url: '/business/train_station/query_list',
@@ -189,6 +203,7 @@ export function getTrainStation(page,size){
         params:{
             page,
             size,
+            ...params,
         },
     },{transformResponse: [
             function (data){
@@ -222,7 +237,7 @@ export function saveTrainStation(trainStation){
 }
 
 // =======================================火车车厢=========================
-export function getTrainCarriage(page,size){
+export function getTrainCarriage(page,size,params){
     //http://localhost:8090/api/
     return request({
         url: '/business/train_carriage/query_list',
@@ -230,6 +245,7 @@ export function getTrainCarriage(page,size){
         params:{
             page,
             size,
+            ...params
         },
     },{transformResponse: [
             function (data){
@@ -281,7 +297,7 @@ export function saveTrainSeat(seat){
 }
 
 // 火车座位
-export function getTrainSeat(page,size){
+export function getTrainSeat(page,size,params){
     //http://localhost:8090/api/
     return request({
         url: '/business/train_seat/query_list',
@@ -289,6 +305,7 @@ export function getTrainSeat(page,size){
         params:{
             page,
             size,
+            ...params,
         },
     },{transformResponse: [
             function (data){

@@ -1,33 +1,34 @@
 <template>
   <a-select
-      v-model:value="trainCode"
-      :style="'width:'+ myWidth"
+      v-model:value="stationName"
       placeholder="请选择车次编号"
       show-search
-      :filter-option="filterTrainCodeOption"
+      :filter-option="filterStationNameOption"
       @change="onChange"
+      :style="'width:'+ myWidth"
   >
-    <a-select-option v-for="item in trains" :key="item.code"
-                     :value="item.code" :label="item.code+item.start+item.end">
-      {{item.code}}|{{item.start}}~{{item.end}}
+    <a-select-option v-for="item in stations" :key="item.name"
+                     :value="item.name" :label="item.name">
+      {{item.name}}
     </a-select-option>
   </a-select>
 </template>
 
 <script>
 import {defineComponent, onMounted, ref, watch} from "vue";
-import {queryAllTrain} from "@/API";
+import {queryAllStation} from "@/API";
 import {notification} from "ant-design-vue";
 
 export default defineComponent({
-  name:"train-select-view",
-  props:["modelValue","width"], // 父子组件的变量
+  name:"station-select-view",
+  props:["modelValue","width"], // 父子组件的参数定义
   emits:['update:modelValue','change'], // 子父组件的方法定义
   setup(props,{emit}){
-    const trainCode =ref();
-    const trains=ref([]);
-    const myWidth=ref(props.width)
+    const stationName =ref();
+    const stations=ref([]);
+    const myWidth = ref(props.width)
     if (Tool.isEmpty(props.width)){
+      console.log("width为空")
       myWidth.value="100%"
     }
 
@@ -38,17 +39,17 @@ export default defineComponent({
      * @param option 选择栏在数据
      * @returns {boolean}
      */
-    const filterTrainCodeOption = (input,option) => {
+    const filterStationNameOption = (input,option) => {
       console.log(input,option)
       return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     }
     // 查询车站编号
-    const queryTrainCode =()=>{
-      queryAllTrain().then((response)=>{
+    const queryStationName =()=>{
+      queryAllStation().then((response)=>{
         if (response.code===200){
-          console.log("查询车站code")
+          console.log("查询车站name")
           console.log(response)
-          trains.value=response.data
+          stations.value=response.data
         }else {
           notification.error({description:response.message})
         }
@@ -58,32 +59,32 @@ export default defineComponent({
     watch(()=>props.modelValue,()=>{
       console.log("props.modelValue",props.modelValue);
       // 更新子组件的值
-      trainCode.value=props.modelValue
+      stationName.value=props.modelValue
     },{immediate:true})
 
     // 子组件传值给父组件
     const onChange=(value)=>{
       // 通知更新父组件的值
       emit('update:modelValue',value);
-      // 扩展 --->将整条数据都返回出去train参数  change方法也暴露了。父组件用不用是它的事
-      // 父组件就可以用 @change="父组件的方法" (train)=>{}
-      let train =trains.value.filter(item=>item.code===value)[0];
-      if (Tool.isNotEmpty(train)){
-        train={};
+      // 扩展 --->将整条数据都返回出去station参数  change方法也暴露了。父组件用不用是它的事
+      // 父组件就可以用 @change="父组件的方法" (station)=>{}
+      let station =stations.value.filter(item=>item.name===value)[0];
+      if (Tool.isNotEmpty(station)){
+        station={};
       }
-      emit('change',train);
+      emit('change',station);
     }
     onMounted(()=>{
-      queryTrainCode();
+      queryStationName();
     })
 
     return{
-      trainCode,
-      filterTrainCodeOption,
-      queryTrainCode,
+      stationName,
+      filterStationNameOption,
+      queryStationName,
       onChange,
-      trains,
-      myWidth,
+      stations,
+      myWidth
     }
   }
 })

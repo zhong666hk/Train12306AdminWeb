@@ -1,7 +1,8 @@
 <template>
   <p>
     <a-space>
-      <a-button type="primary" @click="handleQuery()">刷新</a-button>
+      <Train-select-view v-model="params.trainCode" width="200px"></Train-select-view>
+      <a-button type="primary" @click="handleQuery()">查找</a-button>
       <a-button type="primary" @click="onAdd">新增</a-button>
     </a-space>
   </p>
@@ -179,6 +180,10 @@ export default defineComponent({
       });
     };
 
+    const params=ref({
+      trainCode:null
+    })
+
     const handleQuery = (param) => {
       if (!param) {
         param = {
@@ -187,7 +192,7 @@ export default defineComponent({
         };
       }
       loading.value = true;
-      getTrainSeat(param.page,param.size).then((response) => {
+      getTrainSeat(param.page,param.size,params.value).then((response) => {
         loading.value = false;
         if (response.code===200) {
           train_seats.value = response.data.records;
@@ -230,7 +235,8 @@ export default defineComponent({
       onAdd,
       handleOk,
       onEdit,
-      onDelete
+      onDelete,
+      params,
     };
   },
 });
