@@ -166,6 +166,18 @@ export function saveTrain(train){
     })
 }
 
+/**
+ * 自动生成当前车次的座位
+ * @param record
+ * @returns {*}
+ */
+export function genTrainSeat(record){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/train/gen/'+record.code,
+        method: 'GET',
+    })
+}
 
 /**
  * 查询所有火车所有信息

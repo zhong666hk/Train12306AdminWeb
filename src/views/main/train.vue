@@ -20,7 +20,15 @@
             <a style="color: red">删除</a>
           </a-popconfirm>
           <a @click="onEdit(record)">编辑</a>
+
+          <a-popconfirm
+              cancel-text="取消"
+              ok-text="确认"
+              title="生成车位记录将要删除已有记录，确定要生成?" @confirm="genSeat(record)">
+            <a style="color: red">生成座位</a>
+          </a-popconfirm>
         </a-space>
+
       </template>
       <template v-else-if="column.dataIndex === 'type'">
         <span v-for="item in TRAIN_TYPE_ARRAY" :key="item.key">
@@ -69,7 +77,7 @@
 <script>
 import {defineComponent, onMounted, ref, watch} from 'vue';
 import {notification} from "ant-design-vue";
-import {deleteTrain, getTrain, saveTrain} from "@/API";
+import {deleteTrain, genTrainSeat, getTrain, saveTrain} from "@/API";
 import {pinyin} from "pinyin-pro";
 import StationSelectView from "@/components/Station-select-view.vue";
 
@@ -233,6 +241,16 @@ export default defineComponent({
       });
     };
 
+    const genSeat=(record)=>{
+      genTrainSeat(record).then((response)=>{
+        if (response.code===200){
+          notification.success({description:response.message})
+        }else{
+          notification.error({description: response.message});
+        }
+      })
+    }
+
     onMounted(() => {
       handleQuery({
         page: 1,
@@ -254,6 +272,7 @@ export default defineComponent({
       handleOk,
       onEdit,
       onDelete,
+      genSeat,
     };
   },
 });
