@@ -334,3 +334,80 @@ export function deleteTrainSeat(record){
     })
 }
 
+
+// ===========================定时任务=====================
+
+/**
+ * 保存、更新定时任务
+ * @param url
+ * @param job
+ * @returns {*}
+ */
+export function saveJob(url,job){
+    //http://localhost:8090/api/
+    return request({
+        url: url,
+        method: 'POST',
+        data:{
+            ...job
+        }
+    })
+}
+
+// 火车座位
+export function getJobs(){
+    //http://localhost:8090/api/
+    return request({
+        url: '/batch/job/query',
+        method: 'GET',
+    },{transformResponse: [
+            function (data){
+                return data;
+            }
+        ]})
+}
+
+export function deleteJob(record){
+    //http://localhost:8090/api/
+    return request({
+        url: '/batch/job/delete',
+        method: 'POST',
+        data:{
+            name: record.name,
+            group: record.group
+        }
+    })
+}
+export function pauseJob(record){
+    //http://localhost:8090/api/
+    return request({
+        url: '/batch/job/pause',
+        method: 'POST',
+        data:{
+            name: record.name,
+            group: record.group
+        }
+    })
+}
+// 重启
+export function resumeJob(record){
+    //http://localhost:8090/api/
+    return request({
+        url: '/batch/job/reschedule',
+        method: 'POST',
+        data:{
+            ...record
+        }
+    })
+}
+
+export function runJob(record){
+    //http://localhost:8090/api/
+    return request({
+        url: '/batch/job/run',
+        method: 'POST',
+        data:{
+            ...record
+        }
+    })
+}
