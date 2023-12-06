@@ -500,3 +500,92 @@ export function deleteDailyTrainStation(record){
         method: 'DELETE',
     })
 }
+
+// =========================================当天火车车厢=====================
+
+/**
+ * 保存、更新火车车厢信息
+ * @param trainCarriage
+ * @returns {*}
+ */
+export function saveDailyTrainStationCarriage(trainCarriage){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/daily_train_carriage/save',
+        method: 'POST',
+        data:{
+            ...trainCarriage
+        }
+    })
+}
+
+// 火车座位
+export function getDailyTrainStationCarriage(page,size,params){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/daily_train_carriage/query_list',
+        method: 'GET',
+        params:{
+            page,
+            size,
+            ...params,
+        },
+    },{transformResponse: [
+            function (data){
+                return data;
+            }
+        ]})
+}
+
+export function deleteDailyTrainStationCarriage(record){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/daily_train_carriage/delete/'+record.id,
+        method: 'DELETE',
+    })
+}
+
+// =========================================当天火车车位=====================
+
+/**
+ * 保存、更新火车车厢信息
+ * @param trainSeat
+ * @returns {*}
+ */
+export function saveDailyTrainStationSeat(trainSeat){
+    //http://localhost:8090/api/
+
+    return request({
+        url: '/business/daily_train_seat/save',
+        method: 'POST',
+        data:{
+            ...trainSeat
+        }
+    })
+}
+
+// 火车座位
+export function getDailyTrainStationSeat(page,size,params){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/daily_train_seat/query_list',
+        method: 'GET',
+        params:{
+            page,
+            size,
+            ...params,
+        },
+    },{transformResponse: [
+            function (data){
+                return data;
+            }
+        ]})
+}
+
+export function deleteDailyTrainStationSeat(record){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/daily_train_seat/delete/'+record.id,
+        method: 'DELETE',
+    })
+}

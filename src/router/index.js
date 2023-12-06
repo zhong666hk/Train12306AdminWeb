@@ -75,6 +75,14 @@ const routes = [
             path: 'daily-train-station',
             component:()=>import("@/views/main/business/daily_train_station.vue"),
           },
+          {
+            path: 'daily-train-carriage',
+            component:()=>import("@/views/main/business/daily_train_carriage.vue"),
+          },
+          {
+            path: 'daily-train-seat',
+            component:()=>import("@/views/main/business/daily_train_seat.vue"),
+          },
         ]
       },
 

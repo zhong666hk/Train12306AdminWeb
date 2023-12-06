@@ -40,13 +40,26 @@ export default defineComponent({
         </template>
         <a-menu-item key="/business/daily-train">
           <router-link to="/business/daily-train">
-            <FieldTimeOutlined />&nbsp;今日车次
+            <FormOutlined />&nbsp;今日车次
           </router-link>
         </a-menu-item>
 
         <a-menu-item key="/business/daily-train-station">
           <router-link to="/business/daily-train-station">
-            <FieldTimeOutlined />&nbsp;今日车站
+            <FormOutlined />&nbsp;今日车站
+          </router-link>
+        </a-menu-item>
+
+        <a-menu-item key="/business/daily-train-carriage">
+          <router-link to="/business/daily-train-carriage">
+            <FormOutlined />&nbsp;今日车厢
+          </router-link>
+        </a-menu-item>
+
+
+        <a-menu-item key="/business/daily-train-seat">
+          <router-link to="/business/daily-train-seat">
+            <FormOutlined />&nbsp;今日座位
           </router-link>
         </a-menu-item>
 
