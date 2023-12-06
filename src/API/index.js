@@ -455,3 +455,48 @@ export function deleteDailyTrain(record){
         method: 'DELETE',
     })
 }
+
+
+// =========================================当天车站=====================
+
+/**
+ * 保存、更新火车车站信息
+ * @param train
+ * @returns {*}
+ */
+export function saveDailyTrainStation(train){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/daily_train_station/save',
+        method: 'POST',
+        data:{
+            ...train
+        }
+    })
+}
+
+// 火车座位
+export function getDailyTrainStation(page,size,params){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/daily_train_station/query_list',
+        method: 'GET',
+        params:{
+            page,
+            size,
+            ...params,
+        },
+    },{transformResponse: [
+            function (data){
+                return data;
+            }
+        ]})
+}
+
+export function deleteDailyTrainStation(record){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/daily_train_station/delete/'+record.id,
+        method: 'DELETE',
+    })
+}
