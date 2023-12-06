@@ -6,6 +6,7 @@
       show-search
       :filter-option="filterTrainCodeOption"
       @change="onChange"
+      allow-clear
   >
     <a-select-option v-for="item in trains" :key="item.code"
                      :value="item.code" :label="item.code+item.start+item.end">

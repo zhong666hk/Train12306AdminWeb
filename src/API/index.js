@@ -411,3 +411,47 @@ export function runJob(record){
         }
     })
 }
+
+// =========================================当天车次=====================
+
+/**
+ * 保存、更新火车座位信息
+ * @param train
+ * @returns {*}
+ */
+export function saveDailyTrain(train){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/daily_train/save',
+        method: 'POST',
+        data:{
+            ...train
+        }
+    })
+}
+
+// 火车座位
+export function getDailyTrain(page,size,params){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/daily_train/query_list',
+        method: 'GET',
+        params:{
+            page,
+            size,
+            ...params,
+        },
+    },{transformResponse: [
+            function (data){
+                return data;
+            }
+        ]})
+}
+
+export function deleteDailyTrain(record){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/daily_train/delete/'+record.id,
+        method: 'DELETE',
+    })
+}

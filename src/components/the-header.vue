@@ -68,6 +68,12 @@
         </router-link>
       </a-menu-item>
 
+      <a-menu-item key="/business/daily-train">
+        <router-link to="/business/daily-train">
+          <FieldTimeOutlined />&nbsp;今天车次
+        </router-link>
+      </a-menu-item>
+
     </a-menu>
   </a-layout-header>
 </template>

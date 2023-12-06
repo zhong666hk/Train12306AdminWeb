@@ -31,27 +31,27 @@ const routes = [
         children: [
           {
             path: 'station',
-            component:()=>import("@/views/main/business/station.vue"),
+            component:()=>import("@/views/main/base/station.vue"),
           },
           {
             path: 'admin',
-            component:()=>import("@/views/main/business/admin.vue"),
+            component:()=>import("@/views/main/base/admin.vue"),
           },
           {
             path: 'train',
-            component:()=>import("@/views/main/business/train.vue"),
+            component:()=>import("@/views/main/base/train.vue"),
           },
           {
             path: 'train_station',
-            component:()=>import("@/views/main/business/train_station.vue"),
+            component:()=>import("@/views/main/base/train_station.vue"),
           },
           {
             path: 'train_carriage',
-            component:()=>import("@/views/main/business/train_carriage.vue"),
+            component:()=>import("@/views/main/base/train_carriage.vue"),
           },
           {
             path: 'train_seat',
-            component:()=>import("@/views/main/business/train_seat.vue"),
+            component:()=>import("@/views/main/base/train_seat.vue"),
           },
         ]
       },
@@ -61,6 +61,15 @@ const routes = [
           {
             path: 'job',
             component:()=>import("@/views/main/batch/job.vue"),
+          },
+        ]
+      },
+      {
+        path: 'business',
+        children: [
+          {
+            path: 'daily-train',
+            component:()=>import("@/views/main/business/daily_train.vue"),
           },
         ]
       },
