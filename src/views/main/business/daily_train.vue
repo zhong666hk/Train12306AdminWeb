@@ -5,6 +5,7 @@
       <a-date-picker v-model:value="params.date"  valueFormat="YYYY-MM-DD" placeholder="请选择日期" width="200px" allow-clear/>
       <a-button type="primary" @click="handleQuery()">查找</a-button>
       <a-button type="primary" @click="onAdd">新增</a-button>
+      <a-button type="primary" danger @click="onClickGenDaily">手动生成车次信息</a-button>
     </a-space>
   </p>
   <a-table :dataSource="daily_trains"
@@ -70,15 +71,24 @@
       </a-form-item>
     </a-form>
   </a-modal>
+  <a-modal v-model:open="open" title="生成车次" @ok="handleGenDailyOk"
+           ok-text="确定" cancel-text="取消">
+    <a-form :model="genDaily" :label-col="{span:4}" :wrapper-col="{span:20}">
+      <a-form-item label="日期">
+        <a-date-picker v-model:value="genDaily.date" placeholder="请选择日期"></a-date-picker>
+      </a-form-item>
+    </a-form>
+  </a-modal>
 </template>
 
 <script>
 import {defineComponent, ref, onMounted, watch} from 'vue';
 import {notification} from "ant-design-vue";
-import {deleteDailyTrain, getDailyTrain, saveDailyTrain} from "@/API";
+import {deleteDailyTrain, genTrainInformation, getDailyTrain, saveDailyTrain} from "@/API";
 import TrainSelectView from "@/components/Train-select-view.vue";
 import StationSelectView from "@/components/Station-select-view.vue";
 import {pinyin} from "pinyin-pro";
+import dayjs from "dayjs";
 
 export default defineComponent({
   name: "daily_train-view",
@@ -86,6 +96,12 @@ export default defineComponent({
   setup() {
     const TRAIN_TYPE_ARRAY = window.TRAIN_TYPE_ARRAY;
     const visible = ref(false);
+    const onClickGenDaily=()=>{
+      open.value=true;
+    }
+    const genDaily=ref({
+      date:null
+    })
     let daily_train = ref({
       id: undefined,
       date: undefined,
@@ -100,6 +116,7 @@ export default defineComponent({
       createTime: undefined,
       updateTime: undefined,
     });
+    const open=ref(false);
     const params =ref({
       date: "",
       code:""
@@ -259,6 +276,23 @@ export default defineComponent({
       });
     };
 
+    const handleGenDailyOk =()=>{
+      let date =dayjs(genDaily.value.date).format("YYYY-MM-DD");
+      genTrainInformation(date).then((response)=>{
+        if (response.code===200){
+          notification.success({description:"生成成功"})
+          open.value=false
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize
+          });
+        }else {
+          notification.error({description:response.message})
+        }
+
+      })
+    }
+
     onMounted(() => {
       handleQuery({
         page: 1,
@@ -281,7 +315,11 @@ export default defineComponent({
       onEdit,
       onDelete,
       params,
-      onChangeCode
+      onChangeCode,
+      open,
+      onClickGenDaily,
+      genDaily,
+      handleGenDailyOk
     };
   },
 });

@@ -4,7 +4,6 @@
       <Train-select-view v-model="params.trainCode" width="200px"></Train-select-view>
       <a-date-picker v-model:value="params.date"  valueFormat="YYYY-MM-DD" placeholder="请选择日期" width="200px" allow-clear/>
       <a-button type="primary" @click="handleQuery()">查找</a-button>
-      <a-button type="primary" @click="onAdd">新增</a-button>
     </a-space>
   </p>
   <a-table :dataSource="daily_train_seats"
@@ -160,10 +159,7 @@ export default defineComponent({
     }
     ];
 
-    const onAdd = () => {
-      daily_train_seat.value = {};
-      visible.value = true;
-    };
+
 
     const onEdit = (record) => {
       daily_train_seat.value = window.Tool.copy(record);
@@ -251,7 +247,6 @@ export default defineComponent({
       handleTableChange,
       handleQuery,
       loading,
-      onAdd,
       handleOk,
       onEdit,
       onDelete,

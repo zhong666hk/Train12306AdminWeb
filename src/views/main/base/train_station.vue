@@ -253,10 +253,13 @@ export default defineComponent({
 
     // 框架校验是异步的 promise
     const validOutTime=async (value)=>{
-      if (!!value && value > train_station.value.inTime){
+      console.log(value,train_station.value.outTime,train_station.value.inTime,train_station.value.outTime > train_station.value.inTime)
+      if (train_station.value.outTime > train_station.value.inTime){
         await Promise.resolve()
+      }else {
+        await Promise.reject('出站时间非法')
       }
-      await Promise.reject('出站时间非法')
+
     }
 
 

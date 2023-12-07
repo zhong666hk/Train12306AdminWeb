@@ -589,3 +589,12 @@ export function deleteDailyTrainStationSeat(record){
         method: 'DELETE',
     })
 }
+
+//========================生成某一天的信息================
+export function genTrainInformation(date){
+    //http://localhost:8090/api/
+    return request({
+        url: '/business/daily_train/gen-daily/'+date,
+        method: 'GET',
+    })
+}
